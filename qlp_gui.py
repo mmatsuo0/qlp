@@ -13,14 +13,42 @@ file_type = [('pointing log data', '*.txt')]
 button_width = 10
 
 
-class Frame(Tkinter.Frame):
+class MainFrame(Tkinter.Frame):
     def __init__(self, master=None):
-        self.file_path = ''
-
         Tkinter.Frame.__init__(self, master)
-        self.master.title('Quick Look')
+        self.master.title('Pointing Monitor')
 
         f1 = Tkinter.Frame(self)
+        button_qlp = Tkinter.Button(f1, text='qlp',
+                                    width=button_width)
+        button_qlp.bind('<1>', self.quick_look_plot)
+        button_qlp.pack()
+        f1.pack()
+
+        f2 = Tkinter.Frame(self)
+        button_exit = Tkinter.Button(f2, text='Exit',
+                                     width=button_width)
+        button_exit.bind('<1>', self.exit)
+        button_exit.pack(side=Tkinter.LEFT)
+        f2.pack()
+
+    @staticmethod
+    def quick_look_plot(event):
+        qlp = QuickLookPlot()
+
+    @staticmethod
+    def exit(event):
+        sys.exit()
+
+
+class QuickLookPlot:
+    def __init__(self):
+        self.file_path = ''
+
+        self.win = Tkinter.Toplevel()
+        self.win.title('Quick Look')
+
+        f1 = Tkinter.Frame(self.win)
         button_list = Tkinter.Button(f1, text='List',
                                      width=button_width)
         button_list.bind('<1>', self.select_file)
@@ -34,15 +62,15 @@ class Frame(Tkinter.Frame):
         l2.pack(side=Tkinter.LEFT)
         f1.pack()
 
-        f2 = Tkinter.Frame(self)
+        f2 = Tkinter.Frame(self.win)
         button_plot = Tkinter.Button(f2, text='Plot',
                                      width=button_width)
         button_plot.bind('<1>', self.plot)
         button_plot.pack(side=Tkinter.LEFT)
-        button_quit = Tkinter.Button(f2, text='Exit',
-                                     width=button_width)
-        button_quit.bind('<1>', self.exit)
-        button_quit.pack(side=Tkinter.LEFT)
+        button_close = Tkinter.Button(f2, text='Close',
+                                      width=button_width)
+        button_close.bind('<1>', self.close)
+        button_close.pack(side=Tkinter.LEFT)
         f2.pack()
 
     def select_file(self, event):
@@ -58,15 +86,12 @@ class Frame(Tkinter.Frame):
             qlp.select_array()
             qlp.plot_data()
             qlp.show_figure_gui()
-        else:
-            print 'Please select file.'
 
-    @staticmethod
-    def exit(event):
-        sys.exit()
+    def close(self, event):
+        self.win.destroy()
 
 
 if __name__ == '__main__':
-    f = Frame()
+    f = MainFrame()
     f.pack()
     f.mainloop()
